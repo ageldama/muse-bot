@@ -1,0 +1,103 @@
+#+TITLE: muse-bot TODOs
+#+DATE: <2021-03-06 Sat>
+
+* DONE command parser
+  CLOSED: [2021-03-06 Sat 23:15]
+
+* DONE dotenv에 설정한 것이 ENV으로 child-proc까지 전달될까? ==> YES
+  CLOSED: [2021-03-06 Sat 23:44]
+  1) ...그렇지 않다면, 특별한 문법의 설정을 써서 전달되도록 하면 될 것 같아.
+  2) 어디에 쓰고 싶냐하면,
+     - ytdl을 할 때, 저장할 디렉토리를 지정.
+  3) 예제 프로그램 작성해보니, 잘 동작.
+
+* DONE catch an exception on ~child_process.execFileSync(..)~
+  CLOSED: [2021-03-06 Sat 23:48]
+    Error: spawnSync non-existing ENOENT
+    errno: 'ENOENT',
+    code: 'ENOENT',
+
+* DONE execFileSync ++ exit-code?
+  CLOSED: [2021-03-06 Sat 23:53]
+    Error: Command failed: ./fail.sh
+    status: 243,
+    signal: null,
+    output: [ null, <Buffer >, <Buffer > ],
+    pid: 24483,
+    stdout: <Buffer >,
+    stderr: <Buffer >
+    }
+
+* DONE spawn ++ exit-code?
+  CLOSED: [2021-03-07 Sun 00:06]
+
+* DONE spawn a background process
+  CLOSED: [2021-03-07 Sun 00:06]
+
+* DONE scripts.d/* : 스크립트 작성 [5/5]
+  CLOSED: [2021-03-08 Mon 16:50]
+  - [X] bt-conn-speaker-hk-go-play.sh
+  - [X] radio-fm4u.sh
+  - [X] radio-atm.sh
+  - [X] ytdl URL
+  - [X] ytdl-queue URL
+  - ...여러개 지정해서, gitignore하고 싶은 스크립트 넣어 놓으면 좋겠지.
+
+* DONE globber --> [dir, name] 으로 고칙
+  CLOSED: [2021-03-08 Mon 19:12]
+
+* DONE sudo poweroff, sudo reboot 비번 없이 동작하도록.
+  CLOSED: [2021-03-13 Sat 15:53]
+  #+begin_src text
+/etc/sudoers 맨 끝에:
+jhyun localhost =NOPASSWD: /usr/bin/systemctl poweroff,/usr/bin/systemctl halt,/usr/bin/systemctl reboot
+
+  #+end_src
+
+* DONE startup.d/00..99-blah.sh
+  CLOSED: [2021-03-13 Sat 15:53]
+  1) pulseaudio-init.sh
+  2) bt-on.sh
+  3) bt-conn-speaker.sh
+
+* DONE command-handler 구현 [9/9]
+  CLOSED: [2021-03-13 Sat 15:53]
+  1) [X] h
+  2) [X] bt-off, bt-stat
+  3) [X] vol, vup, vdn, mute, unmote
+  4) [X] uptime, poweroff, reboot, temp, df, mem
+  5) [X] ls : list scripts
+  6) [X] s : spawn script process in background
+  7) [X] r : run foreground
+  8) [X] k : kill #pid
+  9) [X] ps : list processes
+
+
+* DONE promise 한 번에 많이 생성할 때, 개별 await말고 wait-all하여 성능 빠르게. [4/4]
+  CLOSED: [2021-03-13 Sat 18:37]
+  1) [X] h
+  2) [X] ls
+  3) [X] ps
+  4) [X] telegram-client#send-messages
+
+* DONE poweroff + sched?
+  CLOSED: [2021-03-13 Sat 20:43]
+  - ~sched~
+  - ~sched 0125~ : at 01:25
+  - ~sched +45~ : after 45-mins
+  - ~sched cancel~
+
+* DONE ytdl, ytdq [3/3]
+  CLOSED: [2021-03-13 Sat 21:23]
+  1) ytdl은 bg-spawn + queuing, ytdq은 fg-exec.
+  2) [X] ytdl-queue
+  3) [X] ytdl-add
+  4) [X] ytdl-worker
+
+* DONE run, spawn을 ls 번호가 아니라 스크립트 이름 일부 매칭으로 하기
+  CLOSED: [2021-03-13 Sat 22:11]
+  1) ls 해놓고 스크립트 번호 찾기 귀찮아서.
+     1) 스크립트 이름은 대충 외우니까.
+  2) SAFETY: 여러개의 스크립트 파일에 매칭되면 이름들만 출력하고 실행은 않기.
+  3) PARSER: s, r을 바꾸니 다른 것과 충돌 나서, 조금 더 고쳐야할듯.
+

@@ -1,0 +1,133 @@
+#!/usr/bin/env perl
+
+use strict;
+use warnings;
+
+sub get_default_sink {
+    my $stdout = qx^pactl info | grep "Default Sink" | cut -f3 -d" "^;
+    chop $stdout;
+    return $stdout;
+}
+
+sub get_mute {
+    my $sink = shift;
+    my $stdout = qx^pactl list sinks | grep -A 10 "${sink}" | grep "Mute: "^;
+    if (my ($yes_or_no) = $stdout =~ /Mute: (yes|no)/) {
+        return $yes_or_no eq 'yes';
+    }
+}
+
+sub get_volumes {
+    my $sink = shift;
+    my $stdout = qx(pactl list sinks | grep -A 10 "${sink}" | grep "^\\sVolume: ");
+    #front-left: 63570 /  97% / -0.79 dB,   front-right: 63570 /  97% / -0.79 dB
+    if(my($left, $right) = $stdout =~ /(\d+)\%.+\s+(\d+)\%/) {
+        #print($stdout);
+        #print($left, '-', $right, "\n");
+        return ($left, $right);
+    }
+}
+
+sub average{
+  my $tot = 0;
+  my $len = scalar @_;
+  $tot += $_ for @_;
+  return $tot / $len;
+}
+
+sub get_avg_volume {
+    my $sink = shift;
+    return average(get_volumes($sink));
+}
+
+sub toggle_mute {
+    my $sink = shift;
+    my $stdout = qx^pactl set-sink-mute "${sink}" toggle^;
+}
+
+sub mute {
+    my $sink = shift;
+    my $stdout = qx^pactl set-sink-mute "${sink}" 1^;
+}
+
+sub unmute {
+    my $sink = shift;
+    my $stdout = qx^pactl set-sink-mute "${sink}" 0^;
+}
+
+sub set_volume {
+    my $sink = shift;
+    my $new_vol = shift;
+    #print($sink, " --> ", $new_vol, "\n");
+    my $stdout = qx^pactl set-sink-volume "${sink}" $new_vol%^;
+}
+
+sub volume_up {
+    my $sink = shift;
+		my $delta = shift;
+    my $vol = get_avg_volume($sink);
+    if ($vol < 100) {
+        set_volume $sink, ($vol + $delta);
+    }
+}
+
+sub volume_down {
+    my $sink = shift;
+		my $delta = shift;
+    my $vol = get_avg_volume($sink);
+    if ($vol > 0) {
+        set_volume $sink, ($vol - $delta);
+    }
+}
+
+sub print_status {
+    my $sink = get_default_sink;
+    my $mute = get_mute($sink);
+    my $vol = get_avg_volume($sink);
+    print $mute?'1':'0', "\t", $vol, "\t", $sink,"\n";
+}
+
+# ------
+
+{
+    foreach my $arg (@ARGV) {
+        if ($arg eq 'status') {
+            # do nothing
+        }
+        elsif ($arg eq 'toggle-mute') {
+            my $sink = get_default_sink;
+            print "toggle-mute\n";
+            toggle_mute($sink);
+        }
+        elsif ($arg eq 'mute') {
+            my $sink = get_default_sink;
+            print "mute\n";
+            mute($sink);
+        }
+        elsif ($arg eq 'unmute') {
+            my $sink = get_default_sink;
+            print "unmute\n";
+            unmute($sink);
+        }
+        elsif ($arg eq 'up') {
+            my $sink = get_default_sink;
+            print "vup\n";
+            volume_up($sink, 5);
+        }
+        elsif ($arg eq 'down') {
+            my $sink = get_default_sink;
+            print "vdn\n";
+            volume_down($sink, 5);
+        }
+        elsif($arg =~ /set=(\d+)/) {
+            my $sink = get_default_sink;
+            my $new_vol = $1;
+            print "new-vol: $new_vol\n";
+            set_volume($sink, $new_vol);
+        }
+    }
+    print_status;
+}
+
+# EOF.
+

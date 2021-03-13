@@ -1,0 +1,16 @@
+CMD_INTERVAL_SECS=5
+
+TELEGRAM_BOT_API_ID=
+TELEGRAM_CHAT_ID=
+
+YTDL_DIR=/var/lib/mpd/music/
+
+INIT_0_DIR=./inits0.d/
+INIT_1_DIR=./inits1.d/
+
+BUILTINS_DIR=./builtins.d/
+
+SCRIPT_0_DIR=./scripts0.d/
+SCRIPT_1_DIR=./scripts1.d/
+
+

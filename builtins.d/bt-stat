@@ -1,0 +1,4 @@
+#!/bin/sh
+bluetoothctl info $1 | grep Connected | sed -e 's/^[[:space:]]*//'
+
+
