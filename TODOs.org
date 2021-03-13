@@ -101,3 +101,16 @@ jhyun localhost =NOPASSWD: /usr/bin/systemctl poweroff,/usr/bin/systemctl halt,/
   2) SAFETY: 여러개의 스크립트 파일에 매칭되면 이름들만 출력하고 실행은 않기.
   3) PARSER: s, r을 바꾸니 다른 것과 충돌 나서, 조금 더 고쳐야할듯.
 
+
+  
+  
+* TODO README [/]
+    1) [ ] Requirements
+    2) [ ] Features
+    3) [ ] Installing
+    4) [ ] Configuration
+    5) [ ] Commands
+    6) [ ] Writing Custom Init/Run/Spawn Scripts
+    7) [ ] Running with supervisord
+
+    
