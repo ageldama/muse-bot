@@ -1,11 +1,15 @@
 'use strict'
 const assert = require('assert')
 const { DateTime } = require('luxon')
+const { parseCmd } = require('./cmd_parser')
+const { routeCmd } = require('./cmd_handler')
+const { resolveOrCatch } = require('./promise_utils')
 
 class SchedRunner {
   constructor() {
     this.at = null
     this.intervalId = null
+    this.scmd = 'poweroff'
   }
 
   clearSched() {
@@ -44,12 +48,18 @@ class SchedRunner {
     }
   }
 
-  start(cb, seconds = 60) {
+  start(cmdHandler, telegramClient, seconds = 60) {
     this.intervalId = setInterval(() => {
       const now = DateTime.now()
       if (this.at && now > this.at) {
         this.stop()
-        cb()
+        //
+        resolveOrCatch(
+          routeCmd(parseCmd(this.scmd), cmdHandler, telegramClient),
+          (err) => {
+            console.log('ERR', err)
+          }
+        )
       }
     }, seconds * 1000)
   }

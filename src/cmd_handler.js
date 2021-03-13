@@ -44,7 +44,8 @@ class CmdHandler {
       '[Process (1)] ps, kill PROC_ID',
       '[Process (2)] ls, spawn SCRIPT_ID [ARGV], run SCRIPT_ID [ARGV]',
       '[YTDL] ytdl URL, ytdq URL',
-      '[Sched] sched, sched 0125, sched +45, sched c'
+      '[Sched (1)] sched, sched 0125, sched +45, sched c',
+      '[Sched (2)] scmd, scmd [CMD..]'
     ]
     await this._telegramClient.sendMessages('HELP', strs)
   }
@@ -266,6 +267,13 @@ class CmdHandler {
     } else {
       this._telegramClient.sendMessage('SCHED CLEARED')
     }
+  }
+
+  async cmdScmd({ val = undefined }) {
+    if (val) {
+      this._schedRunner.scmd = val
+    }
+    this._telegramClient.sendMessage('SCMD:' + this._schedRunner.scmd)
   }
 }
 

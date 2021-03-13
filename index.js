@@ -48,9 +48,7 @@ const { YtdlWorker } = require('./src/ytdl_worker')
   startChatCmdLoop(process.env.CMD_INTERVAL_SECS, telegramClient, cmdHandler)
 
   // start sched-runner
-  schedRunner.start(() => {
-    cmdHandler.cmdPowerOff()
-  })
+  schedRunner.start(cmdHandler, telegramClient)
 
   // start ytdl-worker
   const ytdlWorker = new YtdlWorker(
