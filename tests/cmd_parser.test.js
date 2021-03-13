@@ -212,3 +212,15 @@ test('parse `sched` with absolute time', () => {
   expect(result.type).toBe('cmdSched')
   expect(result.action).toBe('1235')
 })
+
+test('parse `scmd`', () => {
+  const result = parseCmd('scmd kill 0')
+  expect(result.type).toBe('cmdScmd')
+  expect(result.val).toBe('kill 0')
+})
+
+test('`scmd` without cmd', () => {
+  const result = parseCmd('scmd')
+  expect(result.type).toBe('cmdScmd')
+  expect(result.val).not.toBeDefined()
+})

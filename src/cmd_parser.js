@@ -48,7 +48,8 @@ const CmdParser = parsimmon.createLanguage({
         r.cmdRunScript,
         r.cmdYtdlQueue,
         r.cmdYtdl,
-        r.cmdSched
+        r.cmdSched,
+        r.cmdScmd
       )
       .thru((parser) => whitespace.then(parser)),
 
@@ -217,6 +218,22 @@ const CmdParser = parsimmon.createLanguage({
         }
         if (cmd[1]) {
           result.action = cmd[1].val
+        }
+        return result
+      }),
+
+  cmdScmd: (r) =>
+    parsimmon
+      .alt(
+        parsimmon.seq(word('scmd'), whitespace, parsimmon.regexp(/.+/)),
+        word('scmd')
+      )
+      .map((cmd) => {
+        const result = {
+          type: 'cmdScmd'
+        }
+        if (typeof cmd === typeof []) {
+          result.val = cmd[2]
         }
         return result
       })
