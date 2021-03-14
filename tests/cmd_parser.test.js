@@ -96,11 +96,18 @@ test('parse `kill`, takes (procId: number)', () => {
   const result = parseCmd('kill 123')
   expect(result.type).toBe('cmdKillProcess')
   expect(result.procId).toBe(123)
+  expect(result.procSubstr).not.toBeDefined()
 })
 
 test('parse `kill`, requires (procId: number)', () => {
   expect(() => parseCmd('kill')).toThrow(ParsimmonError)
-  expect(() => parseCmd('kill PROC-ID')).toThrow(ParsimmonError)
+})
+
+test('parse `kill`, takes (procSubstr: str)', () => {
+  const result = parseCmd('kill FOOBAR')
+  expect(result.type).toBe('cmdKillProcess')
+  expect(result.procId).not.toBeDefined()
+  expect(result.procSubstr).toEqual('FOOBAR')
 })
 
 test('parse `spawn`, takes (scriptId: number)', () => {

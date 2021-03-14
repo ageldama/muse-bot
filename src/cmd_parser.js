@@ -127,11 +127,16 @@ const CmdParser = parsimmon.createLanguage({
   cmdListProcesses: mkKeywordCmd('ps', 'cmdListProcesses'),
 
   cmdKillProcess: (r) =>
-    parsimmon.seq(word('kill'), r.number).map((cmd) => {
-      return {
-        type: 'cmdKillProcess',
-        procId: cmd[1].val
+    parsimmon.seq(word('kill'), r.nonWhitespaces).map((cmd) => {
+      const result = {
+        type: 'cmdKillProcess'
       }
+      if (isNumeric(cmd[1].val)) {
+        result.procId = Number(cmd[1].val)
+      } else {
+        result.procSubstr = cmd[1].val
+      }
+      return result
     }),
 
   cmdSpawnScript: (r) =>

@@ -14,7 +14,7 @@ async function findScriptBySubstr(telegramClient, scripts, scriptSubstr) {
   }
   await telegramClient.sendMessage({
     NO_EXACT_MATCHING: scriptSubstr,
-    RESULT: filtered
+    RESULT_LEN: filtered.length
   })
   throw new Error(`No/Multiple script can be found by: ${scriptSubstr}`)
 }
@@ -169,14 +169,43 @@ class CmdHandler {
     await this._telegramClient.sendMessages('PS', ps)
   }
 
-  async cmdKillProcess({ procId }) {
-    this._processManager.kill(procId)
+  async cmdKillProcess({ procId, procSubstr }) {
+    if (lodash.isNumber(procId)) {
+      this._processManager.kill(procId)
+    } else {
+      const found = lodash.filter(
+        this._processManager.spawnedProcesses,
+        (proc) => {
+          return (
+            String(proc.pid).indexOf(procSubstr) > -1 ||
+            String(proc.prog).indexOf(procSubstr) > -1 ||
+            String(proc.argv).indexOf(procSubstr) > -1
+          )
+        }
+      )
+
+      if (found.length !== 1) {
+        await this._telegramClient.sendMessage({
+          NO_EXACT_MATCHING: procSubstr,
+          RESULT_LEN: found.length
+        })
+      } else {
+        const proc = found[0]
+        const procId2 = lodash.indexOf(
+          this._processManager.spawnedProcesses,
+          proc
+        )
+        if (procId2 > -1) {
+          this._processManager.kill(procId2)
+        }
+      }
+    }
   }
 
   async cmdSpawnScript({ scriptId, scriptSubstr, argv }) {
     const scripts = this._scriptLister()
     let script
-    if (scriptId) {
+    if (lodash.isNumber(scriptId)) {
       script = scripts[scriptId]
     } else {
       script = await findScriptBySubstr(
@@ -212,7 +241,7 @@ class CmdHandler {
   async cmdRunScript({ scriptId, scriptSubstr, argv }) {
     const scripts = this._scriptLister()
     let script
-    if (scriptId) {
+    if (lodash.isNumber(scriptId)) {
       script = scripts[scriptId]
     } else {
       script = await findScriptBySubstr(
