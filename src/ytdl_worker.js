@@ -12,12 +12,15 @@ class YtdlWorker {
   start(seconds = 10) {
     let running = false
     this.intervalId = setInterval(() => {
-      if (running) return
+      if (running) {
+        return
+      }
       running = true
       // 다른 프로세스 실행 중?
-      console.log('PROC:', this.proc)
-      if (this.proc && !this.proc.exited) return
-      this.proc = null
+      if (this.proc && !this.proc.exited) {
+        running = false
+        return
+      }
       //
       this.dbYtdlQueue
         .getOldest()
@@ -46,7 +49,6 @@ class YtdlWorker {
             //
             return this.dbYtdlQueue.delete(ytdlEntry.id)
           }
-          return null
         })
         .then(() => {})
         .finally(() => (running = false))
