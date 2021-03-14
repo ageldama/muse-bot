@@ -52,7 +52,7 @@ class SchedRunner {
     this.intervalId = setInterval(() => {
       const now = DateTime.now()
       if (this.at && now > this.at) {
-        this.stop()
+        this.at = null // disarm
         //
         resolveOrCatch(
           routeCmd(parseCmd(this.scmd), cmdHandler, telegramClient),

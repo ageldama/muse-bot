@@ -36,22 +36,25 @@ class ProcessManager {
     proc.stdout.on('data', onStdout)
     proc.stderr.on('data', onStderr)
 
-    proc.on('error', (err) => {
-      console.log('spawn error', err)
-    })
-
     const pid = proc.pid
     const entry = {
       pid,
       proc,
       prog,
       argv,
-      exitCode: null
+      exitCode: null,
+      exited: false
     }
+
+    proc.on('error', (err) => {
+      entry.exited = true
+      console.log('spawn error', err)
+    })
 
     this._spawnedProcesses.push(entry)
 
     proc.on('close', (code) => {
+      entry.exited = true
       entry.exitCode = code
       onExitCode(entry.pid, entry, code)
     })
@@ -77,7 +80,7 @@ class ProcessManager {
 
   kill(idx) {
     const entry = this._spawnedProcesses[idx]
-    if (entry.exitCode === null) {
+    if (entry && !entry.exited) {
       treeKill(entry.pid)
     }
     return entry

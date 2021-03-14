@@ -6,6 +6,7 @@ class YtdlWorker {
     this.processManager = processManager
     this.builtinsDir = builtinsDir
     this.intervalId = null
+    this.proc = null
   }
 
   start(seconds = 10) {
@@ -13,13 +14,17 @@ class YtdlWorker {
     this.intervalId = setInterval(() => {
       if (running) return
       running = true
+      // 다른 프로세스 실행 중?
+      console.log('PROC:', this.proc)
+      if (this.proc && !this.proc.exited) return
+      this.proc = null
       //
       this.dbYtdlQueue
         .getOldest()
         .then((ytdlEntry) => {
           if (ytdlEntry) {
             // spawn ytdl
-            this.processManager.spawn(
+            this.proc = this.processManager.spawn(
               this.builtinsDir + '/ytdl.sh',
               [ytdlEntry.url],
               // onStdout
