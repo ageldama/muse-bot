@@ -34,7 +34,7 @@ class YtdlWorker {
   start(seconds = 10) {
     const mutex = new Mutex()
     this.intervalId = setInterval(() => {
-      mutex.acquire().then(() => {
+      mutex.runExclusive(() => {
         // 다른 프로세스 실행 중?
         if (this.proc && !this.proc.exited) {
           return
