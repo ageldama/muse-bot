@@ -29,7 +29,7 @@ const { YtdlWorker } = require('./src/ytdl_worker')
   const procManager = new ProcessManager()
 
   // sched-runner
-  const schedRunner = new SchedRunner()
+  const schedRunner = new SchedRunner(process.env.SCMD)
 
   // cmd-handler
   const cmdHandler = new CmdHandler(

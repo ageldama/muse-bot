@@ -6,10 +6,10 @@ const { routeCmd } = require('./cmd_handler')
 const { resolveOrCatch } = require('./promise_utils')
 
 class SchedRunner {
-  constructor() {
+  constructor(scmd) {
+    this.scmd = scmd
     this.at = null
     this.intervalId = null
-    this.scmd = 'poweroff'
   }
 
   clearSched() {

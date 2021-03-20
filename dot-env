@@ -13,4 +13,5 @@ BUILTINS_DIR=./builtins.d/
 SCRIPT_0_DIR=./scripts0.d/
 SCRIPT_1_DIR=./scripts1.d/
 
+SCMD=kill radio
 
