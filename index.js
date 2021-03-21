@@ -26,7 +26,7 @@ const { YtdlWorker } = require('./src/ytdl_worker')
   )
 
   // proc-manager
-  const procManager = new ProcessManager()
+  const procManager = new ProcessManager(Number(process.env.RUN_TIMEOUT_SECS))
 
   // sched-runner
   const schedRunner = new SchedRunner(process.env.SCMD)
@@ -45,7 +45,11 @@ const { YtdlWorker } = require('./src/ytdl_worker')
   runInits(initGlob, telegramClient, procManager)
 
   // start telegram-chat-update interval
-  startChatCmdLoop(process.env.CMD_INTERVAL_SECS, telegramClient, cmdHandler)
+  startChatCmdLoop(
+    Number(process.env.CMD_INTERVAL_SECS),
+    telegramClient,
+    cmdHandler
+  )
 
   // start sched-runner
   schedRunner.start(cmdHandler, telegramClient)

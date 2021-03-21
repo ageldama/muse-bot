@@ -15,3 +15,5 @@ SCRIPT_1_DIR=./scripts1.d/
 
 SCMD=kill radio
 
+RUN_TIMEOUT_SECS=15
+

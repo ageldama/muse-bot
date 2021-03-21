@@ -5,15 +5,18 @@ const lodash = require('lodash')
 const treeKill = require('tree-kill')
 
 class ProcessManager {
-  constructor() {
+  constructor(runTimeoutSecs = 15) {
     this._spawnedProcesses = []
+    this.runTimeoutSecs = runTimeoutSecs
   }
 
   exec(prog, argv) {
     try {
-      const stdout = childProcess.execFileSync(prog, argv, {
-        encoding: 'utf8'
-      })
+      const runOpts = {
+        encoding: 'utf8',
+        timeout: 1000 * this.runTimeoutSecs
+      }
+      const stdout = childProcess.execFileSync(prog, argv, runOpts)
       return {
         stdout: stdout.toString('utf8'),
         stderr: '--- TRUNCATED ---',
